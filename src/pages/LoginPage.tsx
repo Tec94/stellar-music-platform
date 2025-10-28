@@ -1,17 +1,22 @@
 import { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAppState } from '../context/AppStateContext';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import { validateEmail, validatePassword } from '../utils/validation';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { user } = useAppState();
-  const [email, setEmail] = useState(user?.email ?? '');
+  const location = useLocation();
+  const { signInWithEmail } = useAuth();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const redirectTo = (location.state as { from?: { pathname: string } } | null)?.from?.pathname ?? '/dashboard';
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     const emailResult = validateEmail(email);
     const passwordResult = validatePassword(password);
 
@@ -26,7 +31,16 @@ export function LoginPage() {
     }
 
     setError('');
-    navigate('/dashboard');
+    setLoading(true);
+    const result = await signInWithEmail(email, password);
+    setLoading(false);
+
+    if (result) {
+      setError(result);
+      return;
+    }
+
+    navigate(redirectTo, { replace: true });
   };
 
   return (
@@ -35,7 +49,13 @@ export function LoginPage() {
       {error && <div role="alert">{error}</div>}
       <form className="form" onSubmit={handleSubmit}>
         <label htmlFor="login-email">Email</label>
-        <input id="login-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+        <input
+          id="login-email"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          required
+        />
 
         <label htmlFor="login-password">Password</label>
         <input
@@ -46,7 +66,9 @@ export function LoginPage() {
           required
         />
 
-        <button type="submit">Sign In</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Signing In…' : 'Sign In'}
+        </button>
       </form>
     </section>
   );

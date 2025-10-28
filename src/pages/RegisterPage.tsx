@@ -1,11 +1,11 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppState } from '../context/AppStateContext';
+import { useAuth } from '@/context/AuthContext';
 import { validateEmail, validatePassword, validateUsername } from '../utils/validation';
 
 export function RegisterPage() {
   const navigate = useNavigate();
-  const { user, register, updateProfile, completeOnboarding } = useAppState();
+  const { user, profile, signUpWithEmail, refreshProfile } = useAuth();
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,14 +13,15 @@ export function RegisterPage() {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('Ready to explore the unknown!');
   const [errors, setErrors] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user && user.username) {
+    if (user && profile?.username) {
       navigate('/dashboard');
     }
-  }, [user, navigate]);
+  }, [user, profile, navigate]);
 
-  const handleAccountCreation = (event: FormEvent<HTMLFormElement>) => {
+  const handleAccountCreation = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const validationErrors: string[] = [];
     const emailResult = validateEmail(email);
@@ -35,12 +36,19 @@ export function RegisterPage() {
       return;
     }
 
+    setLoading(true);
+    const error = await signUpWithEmail(email, password, { username });
+    setLoading(false);
+    if (error) {
+      setErrors([error]);
+      return;
+    }
+
     setErrors([]);
-    register({ email, password });
     setStep(2);
   };
 
-  const handleProfileCompletion = (event: FormEvent<HTMLFormElement>) => {
+  const handleProfileCompletion = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const validationErrors: string[] = [];
     const usernameResult = validateUsername(username);
@@ -50,9 +58,17 @@ export function RegisterPage() {
       setErrors(validationErrors);
       return;
     }
+
+    setLoading(true);
+    const currentUser = await refreshProfile();
+    setLoading(false);
+
+    if (!currentUser) {
+      setErrors(['Unable to load profile']);
+      return;
+    }
+
     setErrors([]);
-    updateProfile({ username, bio });
-    completeOnboarding();
     navigate('/dashboard');
   };
 
@@ -78,7 +94,9 @@ export function RegisterPage() {
               required
             />
 
-            <button type="submit">Create Account</button>
+            <button type="submit" disabled={loading}>
+              {loading ? 'Creating Account…' : 'Create Account'}
+            </button>
           </fieldset>
         </form>
       )}
@@ -94,7 +112,9 @@ export function RegisterPage() {
             <label htmlFor="bio">Bio</label>
             <textarea id="bio" value={bio} onChange={(event) => setBio(event.target.value)} required />
 
-            <button type="submit">Continue</button>
+            <button type="submit" disabled={loading}>
+              {loading ? 'Saving…' : 'Continue'}
+            </button>
           </form>
         </div>
       )}
