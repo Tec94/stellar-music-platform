@@ -1,0 +1,316 @@
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  color: #0f172a;
+  background-color: #f8fafc;
+}
+
+body {
+  margin: 0;
+  background: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.layout__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.layout__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.layout__nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.layout__nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.layout__nav a:hover,
+.layout__nav a:focus {
+  text-decoration: underline;
+}
+
+.layout__main {
+  padding: 2rem;
+}
+
+.layout__footer {
+  padding: 1rem 2rem;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.button,
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #1d4ed8;
+  color: #fff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.button--ghost,
+button.button--ghost {
+  background: rgba(30, 64, 175, 0.12);
+  color: #1d4ed8;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 420px;
+}
+
+.form input,
+.form textarea,
+select {
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5f5;
+  font: inherit;
+}
+
+.form textarea {
+  min-height: 120px;
+}
+
+.errors {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.home__actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.home__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.home__stats dt {
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.dashboard__grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.dashboard__grid article {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.6);
+}
+
+.dashboard__cta {
+  display: flex;
+  gap: 1rem;
+}
+
+.tiers__list {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.tier-card {
+  background: #fff;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  box-shadow: 0 12px 28px -20px rgba(15, 23, 42, 0.55);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tier-card ul {
+  padding-left: 1rem;
+}
+
+.tier-card--active {
+  border: 2px solid #1d4ed8;
+}
+
+.media__grid,
+.gallery__grid,
+.quests__grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.media__actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.gallery__grid article {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 0.5rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.gallery__grid img,
+.media__grid img {
+  width: 100%;
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+.gallery__filter {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.chat__messages {
+  list-style: none;
+  margin: 0;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.chat__messages li {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.chat__messages strong {
+  color: #1d4ed8;
+}
+
+.chat__actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.chat__form {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 420px;
+}
+
+.dialog,
+.tutorial,
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  z-index: 10;
+}
+
+.dialog__content,
+.tutorial__content,
+.lightbox img {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 520px;
+  width: 100%;
+}
+
+.tutorial__actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.lightbox img {
+  max-height: 60vh;
+  width: auto;
+}
+
+.quest-wrapper {
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+}
+
+@media (max-width: 900px) {
+  .layout__nav ul {
+    flex-direction: column;
+    background: rgba(15, 23, 42, 0.85);
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+
+  .layout__main {
+    padding: 1.5rem;
+  }
+
+  .home__actions,
+  .dashboard__cta,
+  .media__actions,
+  .chat__actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
