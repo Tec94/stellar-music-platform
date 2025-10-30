@@ -6,16 +6,26 @@ import tsParser from "@typescript-eslint/parser";
 export default [
   js.configs.recommended,
   {
-    files: ["**/*.{ts,tsx}"]
-  },
-  {
+    files: ["src/**/*.{ts,tsx}"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        project: true,
+        project: "./tsconfig.json",
         ecmaFeatures: {
           jsx: true
         }
+      },
+      globals: {
+        window: "readonly",
+        document: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        setInterval: "readonly",
+        clearInterval: "readonly",
+        console: "readonly",
+        navigator: "readonly",
+        localStorage: "readonly",
+        fetch: "readonly"
       }
     },
     plugins: {
@@ -24,7 +34,9 @@ export default [
     },
     rules: {
       ...react.configs.recommended.rules,
-      "react/react-in-jsx-scope": "off"
+      "react/react-in-jsx-scope": "off",
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
     }
   }
 ];

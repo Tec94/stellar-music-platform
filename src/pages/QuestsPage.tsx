@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { QuestCard } from '../components/QuestCard';
 import type { Quest } from '../components/QuestCard';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 const mockQuests: Quest[] = [
   {
@@ -32,6 +33,7 @@ const mockQuests: Quest[] = [
 export function QuestsPage() {
   const [quests, setQuests] = useState(mockQuests);
   const [selectedQuest, setSelectedQuest] = useState<Quest | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
   const handleComplete = async (questId: string) => {
     setQuests((prev) => prev.map((quest) => (quest.id === questId ? { ...quest, completed: true } : quest)));
@@ -43,6 +45,11 @@ export function QuestsPage() {
   };
 
   const closeQuest = () => setSelectedQuest(null);
+
+  useFocusTrap(Boolean(selectedQuest), dialogRef, { onClose: closeQuest });
+
+  const dialogTitleId = selectedQuest ? `quest-dialog-title-${selectedQuest.id}` : undefined;
+  const dialogDescriptionId = selectedQuest ? `quest-dialog-description-${selectedQuest.id}` : undefined;
 
   return (
     <section className="page" aria-labelledby="quests-heading">
@@ -56,6 +63,9 @@ export function QuestsPage() {
             className="quest-wrapper"
             onClick={() => openQuest(quest)}
             data-testid={`quest-trigger-${quest.id}`}
+            aria-haspopup="dialog"
+            aria-expanded={selectedQuest?.id === quest.id}
+            aria-controls="quest-dialog"
           >
             <QuestCard quest={quest} onComplete={handleComplete} />
           </button>
@@ -63,10 +73,19 @@ export function QuestsPage() {
       </div>
 
       {selectedQuest && (
-        <div role="dialog" aria-modal="true" className="dialog" onClick={closeQuest}>
-          <div className="dialog__content" onClick={(event) => event.stopPropagation()}>
-            <h3>{selectedQuest.title}</h3>
-            <p>{selectedQuest.description}</p>
+        <div role="presentation" className="dialog" onClick={closeQuest}>
+          <div
+            id="quest-dialog"
+            ref={dialogRef}
+            className="dialog__content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={dialogTitleId}
+            aria-describedby={dialogDescriptionId}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h3 id={dialogTitleId}>{selectedQuest.title}</h3>
+            <p id={dialogDescriptionId}>{selectedQuest.description}</p>
             <p>{selectedQuest.xpReward} XP reward</p>
             <button type="button" onClick={closeQuest}>
               Close

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppState } from '../context/AppStateContext';
 import { formatDate } from '../utils/dateTime';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 const tutorialSteps = [
   {
@@ -27,11 +28,16 @@ export function DashboardPage() {
   const [showTutorial, setShowTutorial] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [tutorialComplete, setTutorialComplete] = useState(false);
+  const tutorialRef = useRef<HTMLDivElement | null>(null);
 
   const startTutorial = () => {
     setShowTutorial(true);
     setCurrentStep(0);
     setTutorialComplete(false);
+  };
+
+  const closeTutorial = () => {
+    setShowTutorial(false);
   };
 
   const nextStep = () => {
@@ -44,6 +50,12 @@ export function DashboardPage() {
     setShowTutorial(false);
     setTutorialComplete(true);
   };
+
+  useFocusTrap(showTutorial, tutorialRef, { onClose: closeTutorial });
+
+  const tutorialTitleId = `tutorial-step-title-${currentStep}`;
+  const tutorialDescriptionId = `tutorial-step-description-${currentStep}`;
+  const tutorialMetaId = 'tutorial-step-meta';
 
   return (
     <section className="page" aria-labelledby="dashboard-heading">
@@ -69,20 +81,38 @@ export function DashboardPage() {
       </div>
 
       <div className="dashboard__cta">
-        <button type="button" onClick={startTutorial}>
+        <button
+          type="button"
+          onClick={startTutorial}
+          aria-haspopup="dialog"
+          aria-controls="dashboard-tutorial-dialog"
+          aria-expanded={showTutorial}
+        >
           Start Tutorial
         </button>
         <Link to="/quests">View quests</Link>
         <Link to="/tiers">Manage tiers</Link>
       </div>
 
-      {tutorialComplete && <div role="status">Tutorial complete!</div>}
+      {tutorialComplete && (
+        <div role="status" aria-live="polite">
+          Tutorial complete!
+        </div>
+      )}
 
       {showTutorial && (
-        <div role="dialog" aria-modal="true" className="tutorial">
-          <div className="tutorial__content">
-            <h3>{tutorialSteps[currentStep].title}</h3>
-            <p>{tutorialSteps[currentStep].content}</p>
+        <div role="presentation" className="tutorial">
+          <div
+            id="dashboard-tutorial-dialog"
+            ref={tutorialRef}
+            className="tutorial__content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={tutorialTitleId}
+            aria-describedby={`${tutorialDescriptionId} ${tutorialMetaId}`}
+          >
+            <h3 id={tutorialTitleId}>{tutorialSteps[currentStep].title}</h3>
+            <p id={tutorialDescriptionId}>{tutorialSteps[currentStep].content}</p>
             <div className="tutorial__actions">
               {currentStep < tutorialSteps.length - 1 ? (
                 <button type="button" onClick={nextStep}>
@@ -93,11 +123,11 @@ export function DashboardPage() {
                   Finish
                 </button>
               )}
-              <button type="button" className="button--ghost" onClick={() => setShowTutorial(false)}>
+              <button type="button" className="button--ghost" onClick={closeTutorial}>
                 Close
               </button>
             </div>
-            <p>
+            <p id={tutorialMetaId} aria-live="polite">
               Step {currentStep + 1} of {tutorialSteps.length} — Last updated {formatDate(new Date())}
             </p>
           </div>
