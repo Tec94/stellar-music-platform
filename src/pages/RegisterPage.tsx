@@ -75,8 +75,11 @@ export function RegisterPage() {
   return (
     <section className="page" aria-labelledby="register-heading">
       <h2 id="register-heading">Create your account</h2>
+      <p aria-live="polite" aria-atomic="true" className="visually-hidden">
+        Registration step {step} of 2
+      </p>
       {step === 1 && (
-        <form className="form" onSubmit={handleAccountCreation}>
+        <form className="form" onSubmit={handleAccountCreation} aria-label="Account creation step 1 of 2">
           <fieldset>
             <legend>Account</legend>
             <label htmlFor="email">Email</label>
@@ -105,7 +108,7 @@ export function RegisterPage() {
         <div className="onboarding-step">
           <h3>Welcome aboard!</h3>
           <p>Let&apos;s personalize your profile.</p>
-          <form className="form" onSubmit={handleProfileCompletion}>
+          <form className="form" onSubmit={handleProfileCompletion} aria-label="Profile details step 2 of 2">
             <label htmlFor="username">Username</label>
             <input id="username" value={username} onChange={(event) => setUsername(event.target.value)} required />
 

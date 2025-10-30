@@ -59,7 +59,9 @@ export function ChatPage() {
   return (
     <section className="page" aria-labelledby="chat-heading">
       <h2 id="chat-heading">Global Chat</h2>
-      <p>Status: {status === 'connected' ? 'Connected' : 'Reconnecting...'}</p>
+      <p aria-live="polite" role="status">
+        Status: {status === 'connected' ? 'Connected' : 'Reconnecting...'}
+      </p>
       <div className="chat__actions">
         <button type="button" onClick={simulateDisconnect}>
           Simulate Disconnect
@@ -68,7 +70,7 @@ export function ChatPage() {
           Restore Connection
         </button>
       </div>
-      <ul ref={listRef} className="chat__messages">
+      <ul ref={listRef} className="chat__messages" aria-live="polite" aria-relevant="additions">
         {chatMessages.map((item) => (
           <li key={item.id}>
             <strong>{item.author}</strong>
@@ -84,7 +86,11 @@ export function ChatPage() {
           value={message}
           onChange={(event) => setMessage(event.target.value)}
           disabled={status === 'reconnecting'}
+          aria-describedby="chat-status"
         />
+        <span id="chat-status" className="visually-hidden">
+          {status === 'connected' ? 'Chat is connected' : 'Chat is reconnecting'}
+        </span>
         <button type="submit" disabled={status === 'reconnecting'}>
           Send
         </button>
